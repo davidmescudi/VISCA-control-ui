@@ -1,6 +1,4 @@
-use rocket::serde::{Deserialize, Serialize};
-
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize, Clone)]
 pub struct CameraData {
     pub x: f64,
     pub y: f64,
