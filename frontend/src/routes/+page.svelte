@@ -1,13 +1,13 @@
 <script lang="ts">
+
 	export let data;
 	type CameraPosition = {
 		x: number;
 		y: number;
 		z: number;
 	};
-	
+
 	let position: CameraPosition = data.position;
-	
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
@@ -15,14 +15,21 @@
 		const response = await fetch('http://127.0.0.1:8000/api/camera/position', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ x: Number(position.x), y: Number(position.y), z: Number(position.z)})
+			body: JSON.stringify({ x: Number(position.x), y: Number(position.y), z: Number(position.z) })
 		});
 
 		if (response.ok) {
-			console.log('Updated Camera')
+			reloadState()
+			console.log('Updated Camera');
 		} else {
 			console.error('Failed to update camera position');
 		}
+	}
+
+	async function reloadState() {
+		const response = await fetch('http://127.0.0.1:8000/api/camera/position');
+		position = await response.json();
+		data.position = position;
 	}
 </script>
 
@@ -37,7 +44,7 @@
 		</div>
 		<div class="flex flex-col flex-1 overflow-y-auto">
 			<nav class="flex-1 px-2 py-4 bg-neutral-900">
-				<a href="#" class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500">
+				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -53,8 +60,8 @@
 						/>
 					</svg>
 					Add Camera Preset
-				</a>
-				<a href="#" class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-orange-500">
+				</button>
+				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -75,27 +82,64 @@
 						/>
 					</svg>
 					Settings
-				</a>
+				</button>
 			</nav>
 		</div>
 	</div>
 
 	<!-- Main content -->
 	<div class="flex flex-col flex-1 overflow-y-auto bg-neutral-800 pattern justify-center">
-		<form on:submit|preventDefault={handleSubmit} class="bg-neutral-50 flex flex-col mx-auto p-5 rounded gap-5">
-			<label>
-				X:
-				<input type="number" bind:value={position.x} />
-			</label>
-			<label>
-				Y:
-				<input type="number" bind:value={position.y} />
-			</label>
-			<label>
-				Z:
-				<input type="number" bind:value={position.z} />
-			</label>
-			<button type="submit" class="bg-orange-500 text-white rounded p-5">Update Position</button>
-		</form>
+		<div class="p-8 mx-auto">
+			<div class="bg-neutral-900 rounded-t-lg p-3 relative">
+				<p class="text-center text-sm text-neutral-300 font-light">Current state</p>
+				<div>
+					<div class="flex items-center justify-center space-x-10 mt-3">
+						<div class="flex flex-col items-center">
+							<span class="text-3xl text-orange-500 font-bold">{data.position.x}</span>
+							<p class="text-sm text-neutral-600">X</p>
+						</div>
+						<div class="flex flex-col items-center">
+							<span class="text-3xl text-orange-500 font-bold">{data.position.y}</span>
+							<p class="text-sm text-neutral-600">Y</p>
+						</div>
+						<div class="flex flex-col items-center">
+							<span class="text-3xl text-orange-500 font-bold">{data.position.z}</span>
+							<p class="text-sm text-neutral-600">Z</p>
+						</div>
+					</div>
+					<button on:click|preventDefault={reloadState} type="button" aria-label="Reload" class="absolute top-0 right-0 p-3 text-orange-500 hover:bg-orange-500 hover:text-white rounded-tr-lg">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+						  </svg>
+					</button>
+				</div>
+			</div>
+			<div class="bg-neutral-950 rounded-b-lg py-6 px-4 lg:px-12">
+				<p class="text-center text-sm text-neutral-300 font-light">Update state</p>
+				<form on:submit|preventDefault={handleSubmit} class="mt-4">
+					<div class="flex items-center text-xl font-bold">
+						<span class="p-3 text-orange-500">X:</span>
+						<input type="number" bind:value={position.x}
+							class="appearance-none border pl-12 shadow-sm border-neutral-700 focus:border-orange-500 focus:shadow-md focus:placeholder-orange-700 transition rounded-md w-full py-3 text-neutral-400 leading-tight focus:outline-none focus:ring-orange-600 focus:shadow-outline bg-neutral-900"
+						/>
+					</div>
+					<div class="flex items-center text-xl font-bold">
+						<span class="p-3 text-orange-500">Y:</span>
+						<input type="number" bind:value={position.y}
+							class="appearance-none border pl-12 shadow-sm border-neutral-700 focus:border-orange-500 focus:shadow-md focus:placeholder-orange-700 transition rounded-md w-full py-3 text-neutral-400 leading-tight focus:outline-none focus:ring-orange-600 focus:shadow-outline bg-neutral-900"
+						/>
+					</div>
+					<div class="flex items-center text-xl font-bold">
+						<span class="p-3 text-orange-500">Z:</span>
+						<input type="number" bind:value={position.z}
+							class="appearance-none border pl-12 shadow-sm border-neutral-700 focus:border-orange-500 focus:shadow-md focus:placeholder-orange-700 transition rounded-md w-full py-3 text-neutral-400 leading-tight focus:outline-none focus:ring-orange-600 focus:shadow-outline bg-neutral-900"
+						/>
+					</div>
+					<div class="flex items-center justify-center mt-4">
+						<button type="submit" class="bg-orange-500 text-white rounded p-3 hover:bg-orange-600">Update Position</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
