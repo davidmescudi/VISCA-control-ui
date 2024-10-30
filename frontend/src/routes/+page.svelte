@@ -1,4 +1,11 @@
 <script lang="ts">
+	import interact from 'interactjs';
+	import { onMount } from 'svelte';
+
+	const drag_position: { x: Number; y: Number } = {
+		x: 0,
+		y: 0
+	};
 
 	export let data;
 	type CameraPosition = {
@@ -19,7 +26,7 @@
 		});
 
 		if (response.ok) {
-			reloadState()
+			reloadState();
 			console.log('Updated Camera');
 		} else {
 			console.error('Failed to update camera position');
@@ -31,12 +38,60 @@
 		position = await response.json();
 		data.position = position;
 	}
+
+	onMount(() => {
+		interact('.draggable')
+			.draggable({
+				listeners: {
+					move(event) {
+						drag_position.x += event.dx;
+						drag_position.y += event.dy;
+						event.target.style.transform =
+							'translate(' + drag_position.x + 'px, ' + drag_position.y + 'px)';
+					},
+					start(event) {
+						console.log(event.type, event.target);
+					},
+					end(event) {
+						console.log(event.type, event.target);
+					}
+				}
+			})
+			.resizable({
+				edges: { top: false, left: false, bottom: true, right: true },
+				listeners: {
+					move(event) {
+						var target = event.target;
+						var x = parseFloat(target.getAttribute('data-x')) || 0;
+						var y = parseFloat(target.getAttribute('data-y')) || 0;
+
+						// update the element's style
+						target.style.width = event.rect.width + 'px';
+						target.style.height = event.rect.height + 'px';
+
+						target.setAttribute('data-x', x);
+						target.setAttribute('data-y', y);
+					},
+					start(event) {
+						console.log(event.type, event.target);
+					},
+					end(event) {
+						console.log(event.type, event.target);
+					}
+				}
+			});
+	});
 </script>
 
 <div class="flex h-screen bg-gray-100">
 	<!-- sidebar -->
 	<div class="hidden md:flex flex-col w-64 bg-neutral-950">
 		<div class="flex items-center justify-center h-16 gap-3">
+			<img
+				src="https://www.unibw.de/code/@@images/75d98095-a6fb-4004-b16f-cdbb1ef8c157.png"
+				alt="FI Code Logo"
+				class="h-11"
+			/>
 			<div class="flex flex-col">
 				<h2 class="text-base/5 font-semibold text-orange-500">VISCA Protocol</h2>
 				<h2 class="text-base/5 font-semibold text-orange-500">Camera Control</h2>
@@ -89,7 +144,7 @@
 
 	<!-- Main content -->
 	<div class="flex flex-col flex-1 overflow-y-auto bg-neutral-800 pattern justify-center">
-		<div class="p-8 mx-auto">
+		<div class="mx-auto draggable bg-neutral-950 rounded-lg">
 			<div class="bg-neutral-900 rounded-t-lg p-3 relative">
 				<p class="text-center text-sm text-neutral-300 font-light">Current state</p>
 				<div>
@@ -107,36 +162,60 @@
 							<p class="text-sm text-neutral-600">Z</p>
 						</div>
 					</div>
-					<button on:click|preventDefault={reloadState} type="button" aria-label="Reload" class="absolute top-0 right-0 p-3 text-orange-500 hover:bg-orange-500 hover:text-white rounded-tr-lg">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-						  </svg>
+					<button
+						on:click|preventDefault={reloadState}
+						type="button"
+						aria-label="Reload"
+						class="absolute top-0 right-0 p-3 text-orange-500 hover:bg-orange-500 hover:text-white rounded-tr-lg"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+							/>
+						</svg>
 					</button>
 				</div>
 			</div>
-			<div class="bg-neutral-950 rounded-b-lg py-6 px-4 lg:px-12">
+			<div class="rounded-b-lg py-6 px-4 lg:px-12">
 				<p class="text-center text-sm text-neutral-300 font-light">Update state</p>
 				<form on:submit|preventDefault={handleSubmit} class="mt-4">
 					<div class="flex items-center text-xl font-bold">
 						<span class="p-3 text-orange-500">X:</span>
-						<input type="number" bind:value={position.x}
+						<input
+							type="number"
+							bind:value={position.x}
 							class="appearance-none border pl-12 shadow-sm border-neutral-700 focus:border-orange-500 focus:shadow-md focus:placeholder-orange-700 transition rounded-md w-full py-3 text-neutral-400 leading-tight focus:outline-none focus:ring-orange-600 focus:shadow-outline bg-neutral-900"
 						/>
 					</div>
 					<div class="flex items-center text-xl font-bold">
 						<span class="p-3 text-orange-500">Y:</span>
-						<input type="number" bind:value={position.y}
+						<input
+							type="number"
+							bind:value={position.y}
 							class="appearance-none border pl-12 shadow-sm border-neutral-700 focus:border-orange-500 focus:shadow-md focus:placeholder-orange-700 transition rounded-md w-full py-3 text-neutral-400 leading-tight focus:outline-none focus:ring-orange-600 focus:shadow-outline bg-neutral-900"
 						/>
 					</div>
 					<div class="flex items-center text-xl font-bold">
 						<span class="p-3 text-orange-500">Z:</span>
-						<input type="number" bind:value={position.z}
+						<input
+							type="number"
+							bind:value={position.z}
 							class="appearance-none border pl-12 shadow-sm border-neutral-700 focus:border-orange-500 focus:shadow-md focus:placeholder-orange-700 transition rounded-md w-full py-3 text-neutral-400 leading-tight focus:outline-none focus:ring-orange-600 focus:shadow-outline bg-neutral-900"
 						/>
 					</div>
 					<div class="flex items-center justify-center mt-4">
-						<button type="submit" class="bg-orange-500 text-white rounded p-3 hover:bg-orange-600">Update Position</button>
+						<button type="submit" class="bg-orange-500 text-white rounded p-3 hover:bg-orange-600"
+							>Update Position</button
+						>
 					</div>
 				</form>
 			</div>
