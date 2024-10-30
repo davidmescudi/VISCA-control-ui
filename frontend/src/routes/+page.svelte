@@ -43,14 +43,14 @@
 		interact('.draggable')
 			.draggable({
 				listeners: {
-					start(event) {
-						console.log('Start', event.type, event.target);
-					},
 					move(event) {
 						drag_position.x += event.dx;
 						drag_position.y += event.dy;
 						event.target.style.transform =
 							'translate(' + drag_position.x + 'px, ' + drag_position.y + 'px)';
+					},
+					start(event) {
+						console.log(event.type, event.target);
 					},
 					end(event) {
 						console.log(event.type, event.target);
@@ -58,12 +58,7 @@
 				}
 			})
 			.resizable({
-				edges: {
-					top: false,
-					left: false,
-					bottom: true,
-					right: true
-				},
+				edges: { top: false, left: false, bottom: true, right: true },
 				listeners: {
 					move(event) {
 						var target = event.target;
@@ -74,17 +69,16 @@
 						target.style.width = event.rect.width + 'px';
 						target.style.height = event.rect.height + 'px';
 
-						// translate when resizing from top or left edges
-						x += event.deltaRect.left;
-						y += event.deltaRect.top;
-
-						target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-
 						target.setAttribute('data-x', x);
 						target.setAttribute('data-y', y);
+					},
+					start(event) {
+						console.log(event.type, event.target);
+					},
+					end(event) {
+						console.log(event.type, event.target);
 					}
-				},
-				inertia: true
+				}
 			});
 	});
 </script>
