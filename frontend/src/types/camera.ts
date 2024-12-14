@@ -1,4 +1,5 @@
 export type Camera = {
     id: number;
-    identifier: string;
+    name: string;
+    color?: string;
 };

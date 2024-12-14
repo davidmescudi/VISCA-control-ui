@@ -1,16 +1,20 @@
 <script lang="ts">
-	import interact from 'interactjs';
 	import { onMount } from 'svelte';
 	import DraggableButton from '../components/DraggableButton.svelte';
 	import type { Button } from '../types/button';
 	import type {Camera} from '../types/camera';
 
 	let buttons: Button[] = [];
+	let cameras: Camera[] = [];
 
 	function addButton() {
 		buttons = [...buttons, { id: buttons.length + 1, workspace_position: { x: 0, y: 0 }, camera_settings: {zoom: 0, position: {x: 0,y:0}}, name: '' }];
 	}
 
+	function addCamera() {
+		cameras = [...cameras, { id: cameras.length + 1, name: '' }];
+		console.log(cameras);
+	}
 	// TODO: Refactor, as this will be part of the Button component
 	export let data;
 	type CameraPosition = {
@@ -83,7 +87,7 @@
 					</svg>
 					Add Button
 				</button>
-				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full">
+				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addCamera}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -103,7 +107,7 @@
 							d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
 						/>
 					</svg>
-					Settings
+					Add Camera
 				</button>
 			</nav>
 		</div>
@@ -112,7 +116,7 @@
 	<!-- Main content -->
 	<div class="overflow-y-auto bg-neutral-800 pattern w-full h-full">
 		{#each buttons as button (button.id)}
-        	<DraggableButton id={button.id} position={button.workspace_position} />
+        	<DraggableButton {button} />
     	{/each}
 	</div>
 </div>

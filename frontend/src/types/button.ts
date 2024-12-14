@@ -1,5 +1,6 @@
 export type Button = {
     id: number;
+    camera_id?: number;
     workspace_position: {
         x: number;
         y: number;
