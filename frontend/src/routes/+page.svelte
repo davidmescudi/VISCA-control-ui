@@ -1,19 +1,31 @@
 <script lang="ts">
 	import interact from 'interactjs';
 	import { onMount } from 'svelte';
+	import DraggableButton from '../components/DraggableButton.svelte';
+	import type { Button } from '../types/button';
+	import type {Camera} from '../types/camera';
 
+	let buttons: Button[] = [];
+
+	function addButton() {
+		buttons = [...buttons, { id: buttons.length + 1, workspace_position: { x: 0, y: 0 }, camera_settings: {zoom: 0, position: {x: 0,y:0}}, name: '' }];
+		console.log(buttons);
+	}
+
+	// TODO: Refactor, as this will be part of the Button component
 	const drag_position: { x: Number; y: Number } = {
 		x: 0,
 		y: 0
 	};
 
+	// TODO: Refactor, as this will be part of the Button component
 	export let data;
 	type CameraPosition = {
 		x: number;
 		y: number;
 		z: number;
 	};
-
+	// TODO: Refactor, as this will be part of the Button component
 	let position: CameraPosition = data.position;
 
 	async function handleSubmit(event: Event) {
@@ -39,6 +51,7 @@
 		data.position = position;
 	}
 
+	// TODO: Refactor, as this will be part of the Button component
 	onMount(() => {
 		interact('.draggable')
 			.draggable({
@@ -99,7 +112,7 @@
 		</div>
 		<div class="flex flex-col flex-1 overflow-y-auto">
 			<nav class="flex-1 px-2 py-4 bg-neutral-900">
-				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full">
+				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addButton}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -114,7 +127,7 @@
 							d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
 						/>
 					</svg>
-					Add Camera Preset
+					Add Button
 				</button>
 				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full">
 					<svg
@@ -144,6 +157,9 @@
 
 	<!-- Main content -->
 	<div class="flex flex-col flex-1 overflow-y-auto bg-neutral-800 pattern justify-center">
+		{#each buttons as button (button.id)}
+        <DraggableButton id={button.id} position={button.workspace_position} />
+    	{/each}
 		<div class="mx-auto draggable bg-neutral-950 rounded-lg">
 			<div class="bg-neutral-900 rounded-t-lg p-3 relative">
 				<p class="text-center text-sm text-neutral-300 font-light">Current state</p>
