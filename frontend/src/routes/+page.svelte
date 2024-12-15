@@ -3,6 +3,7 @@
 	import DraggableButton from '../components/DraggableButton.svelte';
 	import type { CameraPreset } from '../types/cameraPreset';
 	import type {Camera} from '../types/camera';
+	import CameraList from '../components/CameraList.svelte';
 
 	let cameraPresets: CameraPreset[] = [];
 	let cameras: Camera[] = [];
@@ -109,6 +110,7 @@
 					</svg>
 					Add Camera
 				</button>
+				<CameraList {cameras} />
 			</nav>
 		</div>
 	</div>
