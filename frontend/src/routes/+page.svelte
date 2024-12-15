@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import DraggableButton from '../components/DraggableButton.svelte';
-	import type { Button } from '../types/button';
+	import type { CameraPreset } from '../types/cameraPreset';
 	import type {Camera} from '../types/camera';
 
-	let buttons: Button[] = [];
+	let cameraPresets: CameraPreset[] = [];
 	let cameras: Camera[] = [];
 
 	function addButton() {
-		buttons = [...buttons, { id: buttons.length + 1, workspace_position: { x: 0, y: 0 }, camera_settings: {zoom: 0, position: {x: 0,y:0}}, name: '' }];
+		cameraPresets = [...cameraPresets, { id: cameraPresets.length + 1, workspace_position: { x: 0, y: 0 }, camera_settings: {zoom: 0, position: {x: 0,y:0}}, name: '' }];
 	}
 
 	function addCamera() {
@@ -115,8 +115,8 @@
 
 	<!-- Main content -->
 	<div class="overflow-y-auto bg-neutral-800 pattern w-full h-full">
-		{#each buttons as button (button.id)}
-        	<DraggableButton {button} />
+		{#each cameraPresets as cameraPreset (cameraPreset.id)}
+        	<DraggableButton {cameraPreset} />
     	{/each}
 	</div>
 </div>

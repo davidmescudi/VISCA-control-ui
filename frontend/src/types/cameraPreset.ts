@@ -1,4 +1,4 @@
-export type Button = {
+export type CameraPreset = {
     id: number;
     camera_id?: number;
     workspace_position: {

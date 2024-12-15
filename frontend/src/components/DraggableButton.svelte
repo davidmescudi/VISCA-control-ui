@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import interact from 'interactjs';
-	import type { Button } from '../types/button';
+	import type { CameraPreset } from '../types/cameraPreset';
 
-	export let button: Button;
+	export let cameraPreset: CameraPreset;
 
 	let showForm = false;
 
@@ -13,18 +13,18 @@
 
 	function updateSettings(event: Event) {
 		// TODO: Handle settings update logic here
-		console.log('Updated settings for button', button);
+		console.log('Updated settings for button', cameraPreset);
 		showForm = false;
 	}
 
 	onMount(() => {
-		interact(`.draggable-${button.id}`).draggable({
-			allowFrom: `.handle-${button.id}`,
+		interact(`.draggable-${cameraPreset.id}`).draggable({
+			allowFrom: `.handle-${cameraPreset.id}`,
 			listeners: {
 				move(event) {
-					button.workspace_position.x += event.dx;
-					button.workspace_position.y += event.dy;
-					event.target.style.transform = `translate(${button.workspace_position.x}px, ${button.workspace_position.y}px)`;
+					cameraPreset.workspace_position.x += event.dx;
+					cameraPreset.workspace_position.y += event.dy;
+					event.target.style.transform = `translate(${cameraPreset.workspace_position.x}px, ${cameraPreset.workspace_position.y}px)`;
 				},
 				end(event) {
 					// TODO: Synchronize position with backend
@@ -45,11 +45,11 @@
 </script>
 
 <div
-	class="rounded-lg border border-neutral-700 bg-neutral-900 p-6 draggable draggable-{button.id} w-max absolute"
-	style="transform: translate({button.workspace_position.x}px, {button.workspace_position.y}px);"
+	class="rounded-lg border border-neutral-700 bg-neutral-900 p-6 draggable draggable-{cameraPreset.id} w-max absolute"
+	style="transform: translate({cameraPreset.workspace_position.x}px, {cameraPreset.workspace_position.y}px);"
 >
 	<div class="flex items-center justify-between">
-		<div class="handle-{button.id}">
+		<div class="handle-{cameraPreset.id}">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -75,11 +75,11 @@
 				type="text"
 				id="ButtonName"
 				placeholder="Name"
-				bind:value={button.name}
+				bind:value={cameraPreset.name}
 				class="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm text-white"
 			/>
 
-			{#if !button.name}
+			{#if !cameraPreset.name}
 				<span
 					class="absolute start-0 top-2 -translate-y-1/2 text-xs transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:text-xs text-gray-200"
 				>
@@ -111,7 +111,7 @@
 		<p class="flex gap-2 ml-auto">
 			<span class="font-medium">Button-Id:</span>
 
-			<span class="text-gray-400">{button.id}</span>
+			<span class="text-gray-400">{cameraPreset.id}</span>
 		</p>
 	</div>
 	{#if showForm}
@@ -123,7 +123,7 @@
 					<button
 						type="button"
 						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
-						on:click|preventDefault={() => (button.workspace_position.x = Math.max(0, button.workspace_position.x - 1))}
+						on:click|preventDefault={() => (cameraPreset.workspace_position.x = Math.max(0, cameraPreset.workspace_position.x - 1))}
 					>
 						&minus;
 					</button>
@@ -131,14 +131,14 @@
 					<input
 						type="number"
 						id="workspace_position_x"
-						bind:value={button.workspace_position.x}
+						bind:value={cameraPreset.workspace_position.x}
 						class="focus:border-orange-500 focus:outline-none focus:ring-0 h-10 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm bg-neutral-800 text-white [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
 					/>
 
 					<button
 						type="button"
 						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
-						on:click|preventDefault={() => (button.workspace_position.x += 1)}
+						on:click|preventDefault={() => (cameraPreset.workspace_position.x += 1)}
 					>
 						&plus;
 					</button>
@@ -152,7 +152,7 @@
 					<button
 						type="button"
 						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
-						on:click|preventDefault={() => (button.workspace_position.y = Math.max(0, button.workspace_position.y - 1))}
+						on:click|preventDefault={() => (cameraPreset.workspace_position.y = Math.max(0, cameraPreset.workspace_position.y - 1))}
 					>
 						&minus;
 					</button>
@@ -160,14 +160,14 @@
 					<input
 						type="number"
 						id="workspace_position_y"
-						bind:value={button.workspace_position.y}
+						bind:value={cameraPreset.workspace_position.y}
 						class="focus:border-orange-500 focus:outline-none focus:ring-0 h-10 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm bg-neutral-800 text-white [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
 					/>
 
 					<button
 						type="button"
 						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
-						on:click|preventDefault={() => (button.workspace_position.y += 1)}
+						on:click|preventDefault={() => (cameraPreset.workspace_position.y += 1)}
 					>
 						&plus;
 					</button>
