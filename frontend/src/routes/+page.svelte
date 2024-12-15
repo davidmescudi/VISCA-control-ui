@@ -1,21 +1,32 @@
 <script lang="ts">
-	import interact from 'interactjs';
 	import { onMount } from 'svelte';
+	import DraggableButton from '../components/DraggableButton.svelte';
+	import type { CameraPreset } from '../types/cameraPreset';
+	import type {Camera} from '../types/camera';
+	import CameraList from '../components/CameraList.svelte';
 
-	const drag_position: { x: Number; y: Number } = {
-		x: 0,
-		y: 0
-	};
+	let cameraPresets: CameraPreset[] = [];
+	let cameras: Camera[] = [];
 
+	function addButton() {
+		cameraPresets = [...cameraPresets, { id: cameraPresets.length + 1, workspace_position: { x: 0, y: 0 }, camera_settings: {zoom: 0, position: {x: 0,y:0}}, name: '' }];
+	}
+
+	function addCamera() {
+		cameras = [...cameras, { id: cameras.length + 1, name: '' }];
+		console.log(cameras);
+	}
+	// TODO: Refactor, as this will be part of the Button component
 	export let data;
 	type CameraPosition = {
 		x: number;
 		y: number;
 		z: number;
 	};
-
+	// TODO: Refactor, as this will be part of the Button component
 	let position: CameraPosition = data.position;
-
+	
+	// TODO: Refactor, as this will be part of the Button component
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 
@@ -40,46 +51,7 @@
 	}
 
 	onMount(() => {
-		interact('.draggable')
-			.draggable({
-				listeners: {
-					move(event) {
-						drag_position.x += event.dx;
-						drag_position.y += event.dy;
-						event.target.style.transform =
-							'translate(' + drag_position.x + 'px, ' + drag_position.y + 'px)';
-					},
-					start(event) {
-						console.log(event.type, event.target);
-					},
-					end(event) {
-						console.log(event.type, event.target);
-					}
-				}
-			})
-			.resizable({
-				edges: { top: false, left: false, bottom: true, right: true },
-				listeners: {
-					move(event) {
-						var target = event.target;
-						var x = parseFloat(target.getAttribute('data-x')) || 0;
-						var y = parseFloat(target.getAttribute('data-y')) || 0;
 
-						// update the element's style
-						target.style.width = event.rect.width + 'px';
-						target.style.height = event.rect.height + 'px';
-
-						target.setAttribute('data-x', x);
-						target.setAttribute('data-y', y);
-					},
-					start(event) {
-						console.log(event.type, event.target);
-					},
-					end(event) {
-						console.log(event.type, event.target);
-					}
-				}
-			});
 	});
 </script>
 
@@ -99,7 +71,7 @@
 		</div>
 		<div class="flex flex-col flex-1 overflow-y-auto">
 			<nav class="flex-1 px-2 py-4 bg-neutral-900">
-				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full">
+				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addButton}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -114,9 +86,9 @@
 							d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
 						/>
 					</svg>
-					Add Camera Preset
+					Add Button
 				</button>
-				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full">
+				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addCamera}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -136,89 +108,17 @@
 							d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
 						/>
 					</svg>
-					Settings
+					Add Camera
 				</button>
+				<CameraList {cameras} />
 			</nav>
 		</div>
 	</div>
 
 	<!-- Main content -->
-	<div class="flex flex-col flex-1 overflow-y-auto bg-neutral-800 pattern justify-center">
-		<div class="mx-auto draggable bg-neutral-950 rounded-lg">
-			<div class="bg-neutral-900 rounded-t-lg p-3 relative">
-				<p class="text-center text-sm text-neutral-300 font-light">Current state</p>
-				<div>
-					<div class="flex items-center justify-center space-x-10 mt-3">
-						<div class="flex flex-col items-center">
-							<span class="text-3xl text-orange-500 font-bold">{data.position.x}</span>
-							<p class="text-sm text-neutral-600">X</p>
-						</div>
-						<div class="flex flex-col items-center">
-							<span class="text-3xl text-orange-500 font-bold">{data.position.y}</span>
-							<p class="text-sm text-neutral-600">Y</p>
-						</div>
-						<div class="flex flex-col items-center">
-							<span class="text-3xl text-orange-500 font-bold">{data.position.z}</span>
-							<p class="text-sm text-neutral-600">Z</p>
-						</div>
-					</div>
-					<button
-						on:click|preventDefault={reloadState}
-						type="button"
-						aria-label="Reload"
-						class="absolute top-0 right-0 p-3 text-orange-500 hover:bg-orange-500 hover:text-white rounded-tr-lg"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-6"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-							/>
-						</svg>
-					</button>
-				</div>
-			</div>
-			<div class="rounded-b-lg py-6 px-4 lg:px-12">
-				<p class="text-center text-sm text-neutral-300 font-light">Update state</p>
-				<form on:submit|preventDefault={handleSubmit} class="mt-4">
-					<div class="flex items-center text-xl font-bold">
-						<span class="p-3 text-orange-500">X:</span>
-						<input
-							type="number"
-							bind:value={position.x}
-							class="appearance-none border pl-12 shadow-sm border-neutral-700 focus:border-orange-500 focus:shadow-md focus:placeholder-orange-700 transition rounded-md w-full py-3 text-neutral-400 leading-tight focus:outline-none focus:ring-orange-600 focus:shadow-outline bg-neutral-900"
-						/>
-					</div>
-					<div class="flex items-center text-xl font-bold">
-						<span class="p-3 text-orange-500">Y:</span>
-						<input
-							type="number"
-							bind:value={position.y}
-							class="appearance-none border pl-12 shadow-sm border-neutral-700 focus:border-orange-500 focus:shadow-md focus:placeholder-orange-700 transition rounded-md w-full py-3 text-neutral-400 leading-tight focus:outline-none focus:ring-orange-600 focus:shadow-outline bg-neutral-900"
-						/>
-					</div>
-					<div class="flex items-center text-xl font-bold">
-						<span class="p-3 text-orange-500">Z:</span>
-						<input
-							type="number"
-							bind:value={position.z}
-							class="appearance-none border pl-12 shadow-sm border-neutral-700 focus:border-orange-500 focus:shadow-md focus:placeholder-orange-700 transition rounded-md w-full py-3 text-neutral-400 leading-tight focus:outline-none focus:ring-orange-600 focus:shadow-outline bg-neutral-900"
-						/>
-					</div>
-					<div class="flex items-center justify-center mt-4">
-						<button type="submit" class="bg-orange-500 text-white rounded p-3 hover:bg-orange-600"
-							>Update Position</button
-						>
-					</div>
-				</form>
-			</div>
-		</div>
+	<div class="overflow-y-auto bg-neutral-800 pattern w-full h-full">
+		{#each cameraPresets as cameraPreset (cameraPreset.id)}
+        	<DraggableButton {cameraPreset} />
+    	{/each}
 	</div>
 </div>
