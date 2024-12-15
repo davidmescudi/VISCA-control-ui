@@ -11,8 +11,8 @@
 		showForm = !showForm;
 	}
 
-	function updateSettings(event: Event) {
-		// TODO: Handle settings update logic here
+	function updateCameraPreset(event: Event) {
+		// TODO: Send post request to backend to update camera preset
 		console.log('Updated settings for button', cameraPreset);
 		showForm = false;
 	}
@@ -27,17 +27,7 @@
 					event.target.style.transform = `translate(${cameraPreset.workspace_position.x}px, ${cameraPreset.workspace_position.y}px)`;
 				},
 				end(event) {
-					// TODO: Synchronize position with backend
-					/*
-                        fetch('http://127.0.0.1:8000/api/button/position', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(position)
-                        })
-                            .then(response => response.json())
-                            .then(data => console.log('Position updated:', data))
-                            .catch(error => console.error('Error updating position:', error));
-                        */
+					updateCameraPreset(event);
 				}
 			}
 		});
@@ -115,7 +105,7 @@
 		</p>
 	</div>
 	{#if showForm}
-		<form on:submit|preventDefault={updateSettings} class="mt-4 text-xs">
+		<form on:submit|preventDefault={updateCameraPreset} class="mt-4 text-xs">
 			<!-- Input to update settings for position x -->
 			<div class="w-fit flex items-center">
 				<label for="workspace_position_x" class="p-3 text-orange-500">X: </label>
