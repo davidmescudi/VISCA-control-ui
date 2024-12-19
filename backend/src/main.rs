@@ -23,16 +23,14 @@ fn all_options() {
     /* Intentionally left empty */
 }
 
-// TODO: Remove if not needed
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
-
 #[get("/camera_preset/<id>")]
-fn get_camera_preset(id: u32, state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Option<Json<CameraPreset>> {
+fn get_camera_preset(id: u32, state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Result<Accepted<Json<CameraPreset>>, BadRequest<Option<String>>> {
     let presets = state.read().unwrap();
-    presets.get(&id).cloned().map(Json)
+
+    match presets.get(&id) {
+        Some(preset) => Ok(Accepted(Json(preset.clone()))),
+        None => Err(BadRequest(Some(format!("CameraPreset with ID {} not found", id)))),
+    }
 }
 
 #[get("/camera_presets")]
@@ -79,7 +77,7 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Cors)
         .manage(Arc::new(RwLock::new(HashMap::<u32, CameraPreset>::new())))
-        .mount("/", routes![index, all_options])
+        .mount("/", routes![all_options])
         // TODO: Replace with new functions
         .mount("/api", routes![insert_camera_preset, update_camera_preset, get_all_camera_presets, get_camera_preset])
 }
