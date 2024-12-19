@@ -20,7 +20,7 @@
 	<div class="hidden md:flex flex-col w-64 bg-neutral-950">
 		<div class="flex items-center justify-center h-16 gap-3">
 			<img
-				src="https://www.unibw.de/code/@@images/75d98095-a6fb-4004-b16f-cdbb1ef8c157.png"
+				src="https://www.unibw.de/code/@@images/02539a69-4f5e-4965-9a55-226f3437cf06.png"
 				alt="FI Code Logo"
 				class="h-11"
 			/>
