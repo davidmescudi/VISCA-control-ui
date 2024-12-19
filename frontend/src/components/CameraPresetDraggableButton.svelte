@@ -40,7 +40,7 @@
 
 <div
 	class="rounded-lg border border-neutral-700 bg-neutral-900 p-6 draggable draggable-{cameraPreset.id} w-max absolute"
-	style="transform: translate({cameraPreset.workspace_position.x}px, {cameraPreset.workspace_position.y}px);"
+	style="transform: translate({cameraPreset.workspace_position.x}px, {cameraPreset.workspace_position.y}px); z-index: {showForm ? 1000 : 10};"
 >
 	<div class="flex items-center justify-between">
 		<div class="handle-{cameraPreset.id}">
