@@ -1,14 +1,13 @@
 <script lang="ts">
     import type { Camera } from '../types/camera';
-
-    export let cameras: Camera[];
+    import { cameras } from '../stores/camera';
 </script>
 
 <style>
 </style>
 
 <div class="text-white text-sm">
-    {#each cameras as camera}
+    {#each $cameras as camera}
         <div class="flex justify-between p-3 border-b border-neutral-700">
             <span class="font-bold">Camera-Id: {camera.id}</span>
             <button class="hover:text-orange-500" aria-label="Edit camera">

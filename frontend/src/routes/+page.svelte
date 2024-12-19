@@ -1,58 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import DraggableButton from '../components/DraggableButton.svelte';
-	import type { CameraPreset } from '../types/cameraPreset';
-	import type {Camera} from '../types/camera';
+	// Components import
+	import CameraPresetDraggableButton from '../components/CameraPresetDraggableButton.svelte';
 	import CameraList from '../components/CameraList.svelte';
+	// API call imports
+	import { addCameraPreset } from '../api/cameraPreset';
+	import { addCamera } from '../api/camera';
+	// Store imports
+	import { cameraPresets } from '../stores/cameraPresets';
 
-	let cameraPresets: CameraPreset[] = [];
-	let cameras: Camera[] = [];
-
-	function addButton() {
-		cameraPresets = [...cameraPresets, { id: cameraPresets.length + 1, workspace_position: { x: 0, y: 0 }, camera_settings: {zoom: 0, position: {x: 0,y:0}}, name: '' }];
-	}
-
-	function addCamera() {
-		cameras = [...cameras, { id: cameras.length + 1, name: '' }];
-		console.log(cameras);
-	}
-	// TODO: Refactor, as this will be part of the Button component
-	export let data;
-	type CameraPosition = {
-		x: number;
-		y: number;
-		z: number;
-	};
-	// TODO: Refactor, as this will be part of the Button component
-	let position: CameraPosition = data.position;
-	
-	// TODO: Refactor, as this will be part of the Button component
-	async function handleSubmit(event: Event) {
-		event.preventDefault();
-
-		const response = await fetch('http://127.0.0.1:8000/api/camera/position', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ x: Number(position.x), y: Number(position.y), z: Number(position.z) })
-		});
-
-		if (response.ok) {
-			reloadState();
-			console.log('Updated Camera');
-		} else {
-			console.error('Failed to update camera position');
-		}
-	}
-
+	// TODO: Either implement here or in store
 	async function reloadState() {
-		const response = await fetch('http://127.0.0.1:8000/api/camera/position');
-		position = await response.json();
-		data.position = position;
+
 	}
 
-	onMount(() => {
-
-	});
 </script>
 
 <div class="flex h-screen bg-gray-100">
@@ -71,7 +31,7 @@
 		</div>
 		<div class="flex flex-col flex-1 overflow-y-auto">
 			<nav class="flex-1 px-2 py-4 bg-neutral-900">
-				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addButton}>
+				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addCameraPreset}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -110,15 +70,15 @@
 					</svg>
 					Add Camera
 				</button>
-				<CameraList {cameras} />
+				<CameraList />
 			</nav>
 		</div>
 	</div>
 
 	<!-- Main content -->
 	<div class="overflow-y-auto bg-neutral-800 pattern w-full h-full">
-		{#each cameraPresets as cameraPreset (cameraPreset.id)}
-        	<DraggableButton {cameraPreset} />
+		{#each $cameraPresets as cameraPreset (cameraPreset.id)}
+        	<CameraPresetDraggableButton {cameraPreset} />
     	{/each}
 	</div>
 </div>
