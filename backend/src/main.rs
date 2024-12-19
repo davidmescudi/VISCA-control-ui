@@ -34,9 +34,9 @@ fn get_camera_preset(id: u32, state: &State<Arc<RwLock<HashMap<u32, CameraPreset
 }
 
 #[get("/camera_presets")]
-fn get_all_camera_presets(state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Json<Vec<CameraPreset>> {
+fn get_all_camera_presets(state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Accepted<Json<Vec<CameraPreset>>> {
     let presets = state.read().unwrap();
-    Json(presets.values().cloned().collect())
+    Accepted(Json(presets.values().cloned().collect()))
 }
 
 #[post("/camera_preset/insert", format = "json", data = "<camera_preset>")]
