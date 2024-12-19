@@ -40,8 +40,8 @@ impl CameraPreset {
     }
 
     pub fn validate_update(&self, existing_ids: &HashSet<u32>) -> Result<(), String> {
-        if existing_ids.contains(&self.id) {
-            return Err(format!("ID {} is not unique", self.id));
+        if !existing_ids.contains(&self.id) {
+            return Err(format!("ID {} is non existing", self.id));
         }
         if self.workspace_position.x < 0 || self.workspace_position.y < 0 {
             return Err("Workspace position values must be non-negative".to_string());

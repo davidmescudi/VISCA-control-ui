@@ -42,7 +42,7 @@ fn get_all_camera_presets(state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>
 }
 
 #[post("/camera_preset/insert", format = "json", data = "<camera_preset>")]
-fn insert_camera_preset(camera_preset: Json<CameraPreset>, state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Result<Json<CameraPreset>, BadRequest<Option<String>>>  {
+fn insert_camera_preset(camera_preset: Json<CameraPreset>, state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Result<Accepted<Json<CameraPreset>>, BadRequest<Option<String>>>  {
     let new_preset = camera_preset.into_inner();
 
     let mut presets = state.write().unwrap();
@@ -51,16 +51,15 @@ fn insert_camera_preset(camera_preset: Json<CameraPreset>, state: &State<Arc<RwL
     match new_preset.validate_insert(&existing_ids) {
         Ok(_) => {
             presets.insert(new_preset.id, new_preset.clone());
-            // TODO: Remove *presets when done as this clutters the output
-            info!("CameraPreset with ID {} inserted, current state {:?}", new_preset.id, *presets);
-            Ok(Json(new_preset))
+            info!("CameraPreset with ID {} inserted", new_preset.id);
+            Ok(Accepted(Json(new_preset)))
         }
         Err(e) => Err(BadRequest(Some(e))),
     }
 }
 
 #[post("/camera_preset/update/<id>", format = "json", data = "<camera_preset>")]
-fn update_camera_preset(id: u32, camera_preset: Json<CameraPreset>, state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Result<Accepted<Option<String>>, BadRequest<Option<String>>> {
+fn update_camera_preset(id: u32, camera_preset: Json<CameraPreset>, state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Result<Accepted<Json<CameraPreset>>, BadRequest<Option<String>>> {
     let new_preset = camera_preset.into_inner();
 
     let mut presets = state.write().unwrap();
@@ -68,8 +67,8 @@ fn update_camera_preset(id: u32, camera_preset: Json<CameraPreset>, state: &Stat
 
     match new_preset.validate_update(&existing_ids) {
         Ok(_) => {
-            presets.insert(id, new_preset);
-            Ok(Accepted(Some(format!("CameraPreset with ID {} updated", id))))
+            presets.insert(id, new_preset.clone());
+            Ok(Accepted(Json(new_preset)))
         }
         Err(e) => Err(BadRequest(Some(e))),
     }
@@ -82,5 +81,5 @@ fn rocket() -> _ {
         .manage(Arc::new(RwLock::new(HashMap::<u32, CameraPreset>::new())))
         .mount("/", routes![index, all_options])
         // TODO: Replace with new functions
-        .mount("/api", routes![insert_camera_preset, update_camera_preset, get_all_camera_presets])
+        .mount("/api", routes![insert_camera_preset, update_camera_preset, get_all_camera_presets, get_camera_preset])
 }

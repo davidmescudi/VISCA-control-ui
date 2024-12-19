@@ -2,19 +2,23 @@
 	import { onMount } from 'svelte';
 	import interact from 'interactjs';
 	import type { CameraPreset } from '../types/cameraPreset';
+	import { updateCameraPreset } from '../api/cameraPreset';
 
 	export let cameraPreset: CameraPreset;
 
 	let showForm = false;
 
-	function toggleForm() {
-		showForm = !showForm;
+	async function handleSubmit(event: Event) {
+		const submitSuccess = await updateCameraPreset(cameraPreset);
+		if (submitSuccess) toggleForm();
 	}
 
-	function updateCameraPreset(event: Event) {
-		// TODO: Send post request to backend to update camera preset
-		console.log('Updated settings for button', cameraPreset);
-		showForm = false;
+	function handleBlur(event: FocusEvent) {
+		updateCameraPreset(cameraPreset);
+	}
+
+	function toggleForm() {
+		showForm = !showForm;
 	}
 
 	onMount(() => {
@@ -27,7 +31,7 @@
 					event.target.style.transform = `translate(${cameraPreset.workspace_position.x}px, ${cameraPreset.workspace_position.y}px)`;
 				},
 				end(event) {
-					updateCameraPreset(event);
+					updateCameraPreset(cameraPreset);
 				}
 			}
 		});
@@ -66,6 +70,7 @@
 				id="ButtonName"
 				placeholder="Name"
 				bind:value={cameraPreset.name}
+				on:blur={handleBlur}
 				class="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm text-white"
 			/>
 
@@ -105,15 +110,15 @@
 		</p>
 	</div>
 	{#if showForm}
-		<form on:submit|preventDefault={updateCameraPreset} class="mt-4 text-xs">
-			<!-- Input to update settings for position x -->
-			<div class="w-fit flex items-center">
+		<form on:submit|preventDefault={handleSubmit} class="mt-4 text-xs">
+			<!-- Input to update settings for camera_settings_position x -->
+			<div class="w-full flex items-center justify-between">
 				<label for="workspace_position_x" class="p-3 text-orange-500">X: </label>
 				<div class="flex items-center rounded border border-gray-800">
 					<button
 						type="button"
 						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
-						on:click|preventDefault={() => (cameraPreset.workspace_position.x = Math.max(0, cameraPreset.workspace_position.x - 1))}
+						on:click|preventDefault={() => (cameraPreset.camera_settings.position.x = Math.max(0, cameraPreset.camera_settings.position.x - 1))}
 					>
 						&minus;
 					</button>
@@ -121,28 +126,28 @@
 					<input
 						type="number"
 						id="workspace_position_x"
-						bind:value={cameraPreset.workspace_position.x}
+						bind:value={cameraPreset.camera_settings.position.x}
 						class="focus:border-orange-500 focus:outline-none focus:ring-0 h-10 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm bg-neutral-800 text-white [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
 					/>
 
 					<button
 						type="button"
 						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
-						on:click|preventDefault={() => (cameraPreset.workspace_position.x += 1)}
+						on:click|preventDefault={() => (cameraPreset.camera_settings.position.x += 1)}
 					>
 						&plus;
 					</button>
 				</div>
 			</div>
 
-			<!-- Input to update settings for position y -->
-			<div class="w-fit flex items-center">
+			<!-- Input to update settings for camera_settings_position y -->
+			<div class="w-full flex items-center justify-between">
 				<label for="workspace_position_y" class="p-3 text-orange-500">Y: </label>
 				<div class="flex items-center rounded border border-gray-800">
 					<button
 						type="button"
 						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
-						on:click|preventDefault={() => (cameraPreset.workspace_position.y = Math.max(0, cameraPreset.workspace_position.y - 1))}
+						on:click|preventDefault={() => (cameraPreset.camera_settings.position.y = Math.max(0, cameraPreset.camera_settings.position.y - 1))}
 					>
 						&minus;
 					</button>
@@ -150,14 +155,43 @@
 					<input
 						type="number"
 						id="workspace_position_y"
-						bind:value={cameraPreset.workspace_position.y}
+						bind:value={cameraPreset.camera_settings.position.y}
 						class="focus:border-orange-500 focus:outline-none focus:ring-0 h-10 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm bg-neutral-800 text-white [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
 					/>
 
 					<button
 						type="button"
 						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
-						on:click|preventDefault={() => (cameraPreset.workspace_position.y += 1)}
+						on:click|preventDefault={() => (cameraPreset.camera_settings.position.y += 1)}
+					>
+						&plus;
+					</button>
+				</div>
+			</div>
+
+			<!-- Input to update settings for camera_settings_position zoom -->
+			<div class="w-full flex items-center justify-between">
+				<label for="workspace_position_x" class="p-3 text-orange-500">Zoom: </label>
+				<div class="flex items-center rounded border border-gray-800">
+					<button
+						type="button"
+						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
+						on:click|preventDefault={() => (cameraPreset.camera_settings.zoom = Math.max(0, cameraPreset.camera_settings.zoom - 1))}
+					>
+						&minus;
+					</button>
+
+					<input
+						type="number"
+						id="workspace_position_x"
+						bind:value={cameraPreset.camera_settings.zoom}
+						class="focus:border-orange-500 focus:outline-none focus:ring-0 h-10 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm bg-neutral-800 text-white [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+					/>
+
+					<button
+						type="button"
+						class="size-10 leading-10 transition hover:opacity-75 text-gray-300"
+						on:click|preventDefault={() => (cameraPreset.camera_settings.zoom += 1)}
 					>
 						&plus;
 					</button>
@@ -166,7 +200,7 @@
 
 			<div class="flex items-center justify-center mt-4">
 				<button type="submit" class="bg-orange-500 text-white rounded p-3 hover:bg-orange-600"
-					>Update Position</button
+					>Update Settings</button
 				>
 			</div>
 		</form>
