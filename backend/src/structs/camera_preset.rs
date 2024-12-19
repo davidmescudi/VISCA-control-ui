@@ -23,11 +23,26 @@ pub struct CameraSettings {
 }
 
 impl CameraPreset {
-    pub fn validate(&self, existing_ids: &HashSet<u32>) -> Result<(), String> {
+    pub fn validate_insert(&self, existing_ids: &HashSet<u32>) -> Result<(), String> {
         if existing_ids.contains(&self.id) {
             return Err(format!("ID {} is not unique", self.id));
         }
 
+        if self.workspace_position.x < 0 || self.workspace_position.y < 0 {
+            return Err("Workspace position values must be non-negative".to_string());
+        }
+
+        if self.camera_settings.position.x < 0 || self.camera_settings.position.y < 0 {
+            return Err("Camera position values must be non-negative".to_string());
+        }
+
+        Ok(())
+    }
+
+    pub fn validate_update(&self, existing_ids: &HashSet<u32>) -> Result<(), String> {
+        if existing_ids.contains(&self.id) {
+            return Err(format!("ID {} is not unique", self.id));
+        }
         if self.workspace_position.x < 0 || self.workspace_position.y < 0 {
             return Err("Workspace position values must be non-negative".to_string());
         }
