@@ -12,7 +12,12 @@ export async function addCameraPreset(): Promise<void> {
 
     const response = await fetch('http://127.0.0.1:8000/api/camera_preset/insert', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        },
         body: JSON.stringify(newPreset)
     });
 
@@ -28,7 +33,12 @@ export async function addCameraPreset(): Promise<void> {
 export async function updateCameraPreset(cameraPreset: CameraPreset): Promise<boolean> {
     const response = await fetch(`http://127.0.0.1:8000/api/camera_preset/update/${cameraPreset.id}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        },
         body: JSON.stringify(cameraPreset)
     });
     if (response.ok) {
