@@ -82,5 +82,5 @@ fn rocket() -> _ {
         .manage(Arc::new(RwLock::new(HashMap::<u32, CameraPreset>::new())))
         .mount("/", routes![index, all_options])
         // TODO: Replace with new functions
-        .mount("/api", routes![insert_camera_preset, update_camera_preset])
+        .mount("/api", routes![insert_camera_preset, update_camera_preset, get_all_camera_presets])
 }
