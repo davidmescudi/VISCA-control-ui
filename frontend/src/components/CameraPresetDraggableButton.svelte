@@ -27,15 +27,23 @@
 	}
 
 	onMount(() => {
+		const restrictToWorkspace = interact.modifiers.restrict({
+			restriction: 'parent',
+			elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+		});
+
 		interact(`.draggable-${cameraPreset.id}`).draggable({
 			allowFrom: `.handle-${cameraPreset.id}`,
+			modifiers: [restrictToWorkspace],
 			listeners: {
 				move(event) {
-					cameraPreset.workspace_position.x += event.dx;
-					cameraPreset.workspace_position.y += event.dy;
+					// Need to math.round to prevent coordinates turning into floats when at the border of the restriction
+					cameraPreset.workspace_position.x += Math.round(event.dx);
+					cameraPreset.workspace_position.y += Math.round(event.dy);
 					event.target.style.transform = `translate(${cameraPreset.workspace_position.x}px, ${cameraPreset.workspace_position.y}px)`;
 				},
 				end(event) {
+					console.log('end drag', cameraPreset);
 					updateCameraPreset(cameraPreset);
 				}
 			}
