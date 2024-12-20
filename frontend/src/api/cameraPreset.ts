@@ -3,8 +3,15 @@ import { cameraPresets } from '../stores/cameraPresets';
 import type { CameraPreset } from '../types/cameraPreset';
 
 export async function addCameraPreset(): Promise<void> {
+    // Find the highest id in the current presets and add 1 to it, as previous apporach could lead to duplicate ids
+    // ? This is not the best way to generate unique ids, but it works for now
+    const existingPresets = get(cameraPresets);
+    const existingIds = existingPresets.map(preset => preset.id);
+    // If there are no presets, start from 1 otherwise add 1 to the highest id
+    const newId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
+
     const newPreset: CameraPreset = {
-        id: get(cameraPresets).length + 1,
+        id: newId,
         workspace_position: { x: 0, y: 0 },
         camera_settings: {zoom: 0, position: {x: 0,y:0}},
         name: '' 
