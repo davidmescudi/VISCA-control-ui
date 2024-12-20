@@ -95,7 +95,6 @@
 		</div>
 	</div>
 	<!-- SettingsMenu -->
-	<!-- TODO: rename showSettings to showSettings -->
 	{#if showSettings}
 	<form on:submit|preventDefault={handleSubmit} class="mt-2"> 
 		<div class="flex">
