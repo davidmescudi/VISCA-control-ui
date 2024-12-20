@@ -52,3 +52,23 @@ export async function updateCameraPreset(cameraPreset: CameraPreset): Promise<bo
         return false;
     }
 }
+
+export async function deleteCameraPreset(id: number): Promise<boolean> {
+    const response = await fetch(`http://127.0.0.1:8000/api/camera_preset/delete/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
+    });
+
+    if (response.ok) {
+        cameraPresets.update(presets => presets.filter(preset => preset.id !== id));
+        return true;
+    } else {
+        const errorMessage = await response.text();
+        console.error(errorMessage);
+        return false;
+    }
+}
