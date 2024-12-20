@@ -3,24 +3,41 @@
 	import interact from 'interactjs';
 	import type { CameraPreset } from '../types/cameraPreset';
 	import { updateCameraPreset, deleteCameraPreset } from '../api/cameraPreset';
+	import { getAnimationClass } from '../utils/animate';
 
 	export let cameraPreset: CameraPreset;
 
 	let showSettings = false;
 	let isDragging = false;
+	let animationClass = '';
+
+	function animateAPIcallResponse(sucess: boolean) {
+		animationClass = getAnimationClass(sucess);
+		setTimeout(() => {
+			animationClass = '';
+		}, 1000);
+	}
 
 	async function handleSubmit(event: Event) {
 		const submitSuccess = await updateCameraPreset(cameraPreset);
 		if (submitSuccess) toggleSettings();
+		animateAPIcallResponse(submitSuccess);
 	}
 
 	async function handeDelete(event: Event) {
 		const deleteSuccess = await deleteCameraPreset(cameraPreset.id);
 		if (deleteSuccess) toggleSettings();
+		animateAPIcallResponse(deleteSuccess);
 	}
 
-	function handleBlur(event: FocusEvent) {
-		updateCameraPreset(cameraPreset);
+	async function handleBlur(event: FocusEvent) {
+		const blurSucess = await updateCameraPreset(cameraPreset);
+		animateAPIcallResponse(blurSucess);
+	}
+
+	async function handleDragEnd(event: Event) {
+		const dragEndSuccess = await updateCameraPreset(cameraPreset);
+		animateAPIcallResponse(dragEndSuccess);
 	}
 
 	function toggleSettings() {
@@ -46,14 +63,14 @@
 				},
 				end(event) {
 					isDragging = false;
-					updateCameraPreset(cameraPreset);
+					handleDragEnd(event);
 				}
 			}
 		});
 	});
 </script>
 
-<div class="rounded-lg border border-neutral-700 bg-neutral-900 p-4 draggable draggable-{cameraPreset.id} w-max absolute" style="transform: translate({cameraPreset.workspace_position.x}px, {cameraPreset.workspace_position.y}px); z-index: {showSettings ? 1000 : 10};">
+<div class="rounded-lg border border-neutral-700 bg-neutral-900 p-4 draggable draggable-{cameraPreset.id} w-max absolute {animationClass}" style="transform: translate({cameraPreset.workspace_position.x}px, {cameraPreset.workspace_position.y}px); z-index: {showSettings ? 1000 : 10};">
 	<div class="flex items-center gap-4">
 		<!-- Play button to execute camera preset -->
 		<div class="bg-neutral-800 p-2 rounded-full text-orange-500" class:hover:bg-orange-500={!isDragging} class:hover:text-white={!isDragging}>
