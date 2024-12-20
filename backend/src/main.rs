@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate rocket;
 use rocket::serde::json::Json;
-use rocket::response::status::{BadRequest, Accepted};
+use rocket::response::status::{BadRequest, Accepted, NoContent};
 use rocket::State;
 use std::sync::{Arc, RwLock};
 use std::collections::{HashMap, HashSet};
@@ -29,6 +29,17 @@ fn get_camera_preset(id: u32, state: &State<Arc<RwLock<HashMap<u32, CameraPreset
 
     match presets.get(&id) {
         Some(preset) => Ok(Accepted(Json(preset.clone()))),
+        None => Err(BadRequest(Some(format!("CameraPreset with ID {} not found", id)))),
+    }
+}
+
+#[delete("/camera_preset/delete/<id>")]
+fn delete_camera_preset(id: u32, state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Result<NoContent, BadRequest<Option<String>>> {
+    info!("Deleting CameraPreset with ID {}", id);
+    let mut presets = state.write().unwrap();
+
+    match presets.remove(&id) {
+        Some(_) => Ok(NoContent),
         None => Err(BadRequest(Some(format!("CameraPreset with ID {} not found", id)))),
     }
 }
@@ -79,5 +90,5 @@ fn rocket() -> _ {
         .manage(Arc::new(RwLock::new(HashMap::<u32, CameraPreset>::new())))
         .mount("/", routes![all_options])
         // TODO: Replace with new functions
-        .mount("/api", routes![insert_camera_preset, update_camera_preset, get_all_camera_presets, get_camera_preset])
+        .mount("/api", routes![insert_camera_preset, update_camera_preset, delete_camera_preset, get_all_camera_presets, get_camera_preset])
 }
