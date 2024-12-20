@@ -7,6 +7,7 @@
 	export let cameraPreset: CameraPreset;
 
 	let showSettings = false;
+	let isDragging = false;
 
 	async function handleSubmit(event: Event) {
 		const submitSuccess = await updateCameraPreset(cameraPreset);
@@ -37,13 +38,14 @@
 			modifiers: [restrictToWorkspace],
 			listeners: {
 				move(event) {
+					isDragging = true;
 					// Need to math.round to prevent coordinates turning into floats when at the border of the restriction
 					cameraPreset.workspace_position.x += Math.round(event.dx);
 					cameraPreset.workspace_position.y += Math.round(event.dy);
 					event.target.style.transform = `translate(${cameraPreset.workspace_position.x}px, ${cameraPreset.workspace_position.y}px)`;
 				},
 				end(event) {
-					console.log('end drag', cameraPreset);
+					isDragging = false;
 					updateCameraPreset(cameraPreset);
 				}
 			}
@@ -54,7 +56,7 @@
 <div class="rounded-lg border border-neutral-700 bg-neutral-900 p-4 draggable draggable-{cameraPreset.id} w-max absolute" style="transform: translate({cameraPreset.workspace_position.x}px, {cameraPreset.workspace_position.y}px); z-index: {showSettings ? 1000 : 10};">
 	<div class="flex items-center gap-4">
 		<!-- Play button to execute camera preset -->
-		<div class="bg-neutral-800 p-2 rounded-full text-orange-500 hover:bg-orange-500 hover:text-white">
+		<div class="bg-neutral-800 p-2 rounded-full text-orange-500" class:hover:bg-orange-500={!isDragging} class:hover:text-white={!isDragging}>
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
 			  </svg>			  
@@ -80,13 +82,13 @@
 		</label>
 		</div>
 		<!-- Button for toggling settings menu -->
-		<div class="bg-neutral-800 p-2 rounded-full h-fit text-orange-500 hover:bg-orange-500 hover:text-white" role="button" tabindex="0" on:click|preventDefault={toggleSettings} on:keydown|preventDefault={(e) => e.key === 'Enter' && toggleSettings()}>
+		<div class="bg-neutral-800 p-2 rounded-full h-fit text-orange-500" class:hover:bg-orange-500={!isDragging} class:hover:text-white={!isDragging} role="button" tabindex="0" on:click|preventDefault={toggleSettings} on:keydown|preventDefault={(e) => e.key === 'Enter' && toggleSettings()}>
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
 			  </svg>			  
 		</div>
 		<!-- Button for dragging -->
-		<div class="bg-neutral-800 p-2 rounded-full text-orange-500 hover:bg-orange-500 hover:text-white handle-{cameraPreset.id}">
+		<div class="bg-neutral-800 p-2 rounded-full text-orange-500 hover:bg-orange-500 hover:text-white handle-{cameraPreset.id}" class:bg-orange-500={isDragging} class:text-white={isDragging}>
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" transform="rotate(45)" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
 			  </svg>			  
