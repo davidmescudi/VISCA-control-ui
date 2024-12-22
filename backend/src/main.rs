@@ -23,6 +23,20 @@ fn all_options() {
     /* Intentionally left empty */
 }
 
+#[get("/download")]
+fn download_state(state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Accepted<Json<HashMap<u32, CameraPreset>>> {
+    let state = state.read().unwrap();
+
+    Accepted(Json(state.clone()))
+}
+
+#[post("/upload", format = "json", data = "<new_state>")]
+fn upload_state(new_state: Json<HashMap<u32, CameraPreset>>, state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Result<NoContent, BadRequest<Option<String>>> {
+    let mut state = state.write().unwrap();
+    *state = new_state.into_inner();
+    Ok(NoContent)
+}
+
 #[get("/camera_preset/<id>")]
 fn get_camera_preset(id: u32, state: &State<Arc<RwLock<HashMap<u32, CameraPreset>>>>) -> Result<Accepted<Json<CameraPreset>>, BadRequest<Option<String>>> {
     let presets = state.read().unwrap();
@@ -91,4 +105,5 @@ fn rocket() -> _ {
         .mount("/", routes![all_options])
         // TODO: Replace with new functions
         .mount("/api", routes![insert_camera_preset, update_camera_preset, delete_camera_preset, get_all_camera_presets, get_camera_preset])
+        .mount("/backup", routes![download_state, upload_state])
 }
