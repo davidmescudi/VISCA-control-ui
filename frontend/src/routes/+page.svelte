@@ -8,6 +8,8 @@
 	// Store imports
 	import { cameraPresets } from '../stores/cameraPresets';
 	import { tabletMode } from '../stores/tabletMode';
+	import DownloadAsFileButton from '../components/DownloadAsFileButton.svelte';
+	import UploadFileButton from '../components/UploadFileButton.svelte';
 
 	function toggleTabletMode() {
 		tabletMode.update((value) => !value);
@@ -71,12 +73,18 @@
 					Add Camera
 				</button>
 				<CameraList />
-				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full mt-auto" on:click={toggleTabletMode}>
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5h3m-6.75 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-15a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15a2.25 2.25 0 0 0 2.25 2.25Z" />
-					  </svg>
-					  Tablet Mode
-				</button>
+				<div class="mt-auto border-t-2 border-neutral-700 divide-y-2 divide-neutral-700">
+					<div class="flex divide-x-2 divide-neutral-700">
+						<DownloadAsFileButton></DownloadAsFileButton>
+						<UploadFileButton></UploadFileButton>
+					</div>
+					<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full mt-auto justify-center" on:click={toggleTabletMode}>
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5h3m-6.75 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-15a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15a2.25 2.25 0 0 0 2.25 2.25Z" />
+						</svg>
+						Tablet Mode
+					</button>
+				</div>
 			</nav>
 		</div>
 	</div>

@@ -10,7 +10,6 @@ export const load: Load = async ({ fetch }) => {
         }
         const presets: CameraPreset[] = await response.json();
         cameraPresets.set(presets);
-        console.log(presets)
     } catch (error) {
         console.error('Error fetching camera presets:', error);
     }
