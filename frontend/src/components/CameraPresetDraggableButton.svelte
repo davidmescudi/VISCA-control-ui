@@ -4,6 +4,7 @@
 	import type { CameraPreset } from '../types/cameraPreset';
 	import { updateCameraPreset, deleteCameraPreset } from '../api/cameraPreset';
 	import { getAnimationClass } from '../utils/animate';
+	import { tabletMode } from '../stores/tabletMode';
 
 	export let cameraPreset: CameraPreset;
 
@@ -78,8 +79,11 @@
 				<path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
 			  </svg>			  
 		</div>
+		<div class="text-white" class:hidden={!$tabletMode}>
+			{cameraPreset.name}
+		</div>
 		<!-- Input for camere preset name -->
-		<div class="h-fit">
+		<div class="h-fit" class:hidden={$tabletMode}>
 			<label for="CameraPresetName" class="relative block border-b bg-transparent focus-within:border-orange-500 border-neutral-700">
 			<input type="text"
 				id="CameraPresetName"
@@ -99,13 +103,13 @@
 		</label>
 		</div>
 		<!-- Button for toggling settings menu -->
-		<div class="bg-neutral-800 p-2 rounded-full h-fit text-orange-500" class:hover:bg-orange-500={!isDragging} class:hover:text-white={!isDragging} role="button" tabindex="0" on:click|preventDefault={toggleSettings} on:keydown|preventDefault={(e) => e.key === 'Enter' && toggleSettings()}>
+		<div class="bg-neutral-800 p-2 rounded-full h-fit text-orange-500" class:hover:bg-orange-500={!isDragging} class:hover:text-white={!isDragging} role="button" tabindex="0" on:click|preventDefault={toggleSettings} on:keydown|preventDefault={(e) => e.key === 'Enter' && toggleSettings()} class:hidden={$tabletMode}>
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
 			  </svg>			  
 		</div>
 		<!-- Button for dragging -->
-		<div class="bg-neutral-800 p-2 rounded-full text-orange-500 hover:bg-orange-500 hover:text-white handle-{cameraPreset.id}" class:bg-orange-500={isDragging} class:text-white={isDragging}>
+		<div class="bg-neutral-800 p-2 rounded-full text-orange-500 hover:bg-orange-500 hover:text-white handle-{cameraPreset.id}" class:bg-orange-500={isDragging} class:text-white={isDragging} class:hidden={$tabletMode}>
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" transform="rotate(45)" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
 			  </svg>			  
