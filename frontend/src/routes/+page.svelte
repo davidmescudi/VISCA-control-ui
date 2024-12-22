@@ -7,17 +7,17 @@
 	import { addCamera } from '../api/camera';
 	// Store imports
 	import { cameraPresets } from '../stores/cameraPresets';
+	import { tabletMode } from '../stores/tabletMode';
 
-	// TODO: Either implement here or in store
-	async function reloadState() {
-
+	function toggleTabletMode() {
+		tabletMode.update((value) => !value);
 	}
 
 </script>
 
-<div class="flex h-screen bg-gray-100">
+<div class="flex h-screen bg-transparent">
 	<!-- sidebar -->
-	<div class="hidden md:flex flex-col w-64 bg-neutral-950">
+	<div class="flex flex-col w-64 bg-neutral-950" class:hidden={$tabletMode}>
 		<div class="flex items-center justify-center h-16 gap-3">
 			<img
 				src="https://www.unibw.de/code/@@images/02539a69-4f5e-4965-9a55-226f3437cf06.png"
@@ -30,7 +30,7 @@
 			</div>
 		</div>
 		<div class="flex flex-col flex-1 overflow-y-auto">
-			<nav class="flex-1 px-2 py-4 bg-neutral-900">
+			<nav class="flex-1 py-4 bg-neutral-900 flex flex-col">
 				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addCameraPreset}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -71,8 +71,23 @@
 					Add Camera
 				</button>
 				<CameraList />
+				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full mt-auto" on:click={toggleTabletMode}>
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5h3m-6.75 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-15a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15a2.25 2.25 0 0 0 2.25 2.25Z" />
+					  </svg>
+					  Tablet Mode
+				</button>
 			</nav>
 		</div>
+	</div>
+
+	<div class="absolute bottom-0 left-0" class:hidden={!$tabletMode}>
+		<button class="flex items-center px-4 py-2 bg-neutral-900 text-gray-100 hover:bg-orange-500 w-full rounded-tr-lg" on:click={toggleTabletMode}>
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
+			  </svg>			  
+			  Desktop Mode
+		</button>
 	</div>
 
 	<!-- Main content -->
