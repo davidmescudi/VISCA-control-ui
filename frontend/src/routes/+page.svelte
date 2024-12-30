@@ -11,6 +11,7 @@
 	import DownloadAsFileButton from '../components/DownloadAsFileButton.svelte';
 	import UploadFileButton from '../components/UploadFileButton.svelte';
 
+	let zoomLevel: number = 1;
 	function toggleTabletMode() {
 		tabletMode.update((value) => !value);
 	}
@@ -74,6 +75,10 @@
 				</button>
 				<CameraList />
 				<div class="mt-auto border-t-2 border-neutral-700 divide-y-2 divide-neutral-700">
+					<div class="px-4 py-2">
+						<label for="minmax-range" class="block mb-2 text-sm font-medium text-white text-center">Zoom</label>
+						<input id="minmax-range" type="range" min="1" max="5" bind:value={zoomLevel} class="w-full h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer">
+					</div>
 					<div class="flex divide-x-2 divide-neutral-700">
 						<DownloadAsFileButton></DownloadAsFileButton>
 						<UploadFileButton></UploadFileButton>
@@ -99,9 +104,9 @@
 	</div>
 
 	<!-- Main content -->
-	<div class="overflow-y-auto bg-neutral-800 pattern w-full h-full">
+	<div class="overflow-y-auto bg-neutral-800 pattern w-full h-full flex-1" style="transform: scale({1 / zoomLevel}); transform-origin: top left; width: calc(100% * {zoomLevel}); height: calc(100% * {zoomLevel});">
 		{#each $cameraPresets as cameraPreset (cameraPreset.id)}
-        	<CameraPresetDraggableButton {cameraPreset} />
-    	{/each}
+    		<CameraPresetDraggableButton {cameraPreset} />
+		{/each}
 	</div>
 </div>
