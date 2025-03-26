@@ -6,6 +6,7 @@ pub struct Camera {
     pub id: u32,
     pub name: String,
     pub color: Option<String>,
+    pub ip_address: String,
 }
 
 impl Camera {
