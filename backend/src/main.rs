@@ -5,6 +5,8 @@ use rocket::response::status::{BadRequest, Accepted, NoContent};
 use rocket::State;
 use std::sync::{Arc, RwLock};
 use std::collections::{HashMap, HashSet};
+use std::fs;
+use serde::Deserialize;
 
 mod structs {
     pub mod camera_preset;
@@ -12,6 +14,7 @@ mod structs {
 }
 
 use structs::camera_preset::CameraPreset;
+use structs::camera::Camera;
 
 mod fairings {
     pub mod cors;
@@ -21,6 +24,16 @@ use fairings::cors::Cors;
 #[options("/<_..>")]
 fn all_options() {
     /* Intentionally left empty */
+}
+
+#[derive(Deserialize)]
+struct Config {
+    cameras: Vec<Camera>,
+}
+
+fn load_config() -> Config {
+    let config_data = fs::read_to_string("config.json").expect("Unable to read config file");
+    serde_json::from_str(&config_data).expect("Unable to parse config file")
 }
 
 #[get("/download")]
@@ -97,13 +110,20 @@ fn update_camera_preset(id: u32, camera_preset: Json<CameraPreset>, state: &Stat
     }
 }
 
+#[get("/cameras")]
+fn get_cameras(config: &State<Config>) -> Json<Vec<Camera>> {
+    Json(config.cameras.clone())
+}
+
 #[launch]
 fn rocket() -> _ {
+    let config = load_config();
     rocket::build()
         .attach(Cors)
+        .manage(config)
         .manage(Arc::new(RwLock::new(HashMap::<u32, CameraPreset>::new())))
         .mount("/", routes![all_options])
         // TODO: Replace with new functions
-        .mount("/api", routes![insert_camera_preset, update_camera_preset, delete_camera_preset, get_all_camera_presets, get_camera_preset])
+        .mount("/api", routes![insert_camera_preset, update_camera_preset, delete_camera_preset, get_all_camera_presets, get_camera_preset, get_cameras])
         .mount("/backup", routes![download_state, upload_state])
 }
