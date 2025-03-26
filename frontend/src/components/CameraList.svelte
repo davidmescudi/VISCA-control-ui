@@ -1,6 +1,19 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import type { Camera } from '../types/camera';
-    import { cameras } from '../stores/camera';
+    import { writable } from 'svelte/store';
+
+    const cameras = writable<Camera[]>([]);
+
+    onMount(async () => {
+        const response = await fetch('http://127.0.0.1:8000/api/cameras'); // Update with the correct backend URL
+        if (response.ok) {
+            const data: Camera[] = await response.json();
+            cameras.set(data);
+        } else {
+            console.error('Failed to fetch cameras');
+        }
+    });
 </script>
 
 <style>
