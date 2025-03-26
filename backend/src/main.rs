@@ -11,10 +11,12 @@ use serde::Deserialize;
 mod structs {
     pub mod camera_preset;
     pub mod camera;
+    pub mod config;
 }
 
 use structs::camera_preset::CameraPreset;
 use structs::camera::Camera;
+use structs::config::Config;
 
 mod fairings {
     pub mod cors;
@@ -24,11 +26,6 @@ use fairings::cors::Cors;
 #[options("/<_..>")]
 fn all_options() {
     /* Intentionally left empty */
-}
-
-#[derive(Deserialize)]
-struct Config {
-    cameras: Vec<Camera>,
 }
 
 fn load_config() -> Config {
