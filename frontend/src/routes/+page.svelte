@@ -10,6 +10,21 @@
 	import { tabletMode } from '../stores/tabletMode';
 	import DownloadAsFileButton from '../components/DownloadAsFileButton.svelte';
 	import UploadFileButton from '../components/UploadFileButton.svelte';
+	import { onMount } from 'svelte';
+	import type { Camera } from '../types/camera';
+	import { writable } from 'svelte/store';
+
+	const cameras = writable<Camera[]>([]);
+
+	onMount(async () => {
+		const response = await fetch('http://127.0.0.1:8000/api/cameras'); // Update with the correct backend URL
+		if (response.ok) {
+			const data: Camera[] = await response.json();
+			cameras.set(data);
+		} else {
+			console.error('Failed to fetch cameras');
+		}
+	});
 
 	function toggleTabletMode() {
 		tabletMode.update((value) => !value);
@@ -50,7 +65,7 @@
 					</svg>
 					Camera Preset
 				</button>
-				<CameraList />
+				<CameraList {cameras} />
 				<div class="mt-auto border-t-2 border-neutral-700 divide-y-2 divide-neutral-700">
 					<div class="flex divide-x-2 divide-neutral-700">
 						<DownloadAsFileButton></DownloadAsFileButton>
@@ -79,7 +94,7 @@
 	<!-- Main content -->
 	<div class="overflow-y-auto bg-neutral-800 pattern w-full h-full">
 		{#each $cameraPresets as cameraPreset (cameraPreset.id)}
-        	<CameraPresetDraggableButton {cameraPreset} />
+			<CameraPresetDraggableButton {cameraPreset} cameras={$cameras} />
     	{/each}
 	</div>
 </div>
