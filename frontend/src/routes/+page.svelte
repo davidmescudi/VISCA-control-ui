@@ -17,7 +17,7 @@
 	const cameras = writable<Camera[]>([]);
 
 	onMount(async () => {
-		const response = await fetch('http://127.0.0.1:8000/api/cameras'); // Update with the correct backend URL
+		const response = await fetch('http://127.0.0.1:8000/api/cameras');
 		if (response.ok) {
 			const data: Camera[] = await response.json();
 			cameras.set(data);
@@ -36,11 +36,9 @@
 	<!-- sidebar -->
 	<div class="flex flex-col w-64 bg-neutral-950" class:hidden={$tabletMode}>
 		<div class="flex items-center justify-center h-16 gap-3">
-			<img
-				src="https://www.unibw.de/code/@@images/02539a69-4f5e-4965-9a55-226f3437cf06.png"
-				alt="FI Code Logo"
-				class="h-11"
-			/>
+			<a href="https://www.unibw.de/code" target="_blank" rel="noopener noreferrer">
+				<img src="unibw_fi_code_logo.png" alt="FI Code Logo" class="h-11">
+			</a>
 			<div class="flex flex-col">
 				<h2 class="text-base/5 font-semibold text-orange-500">VISCA Protocol</h2>
 				<h2 class="text-base/5 font-semibold text-orange-500">Camera Control</h2>
