@@ -285,7 +285,7 @@
 			</div>
 			<!-- Input to update Camera used by preset -->
 			<label for="cameraSelect" class="w-full flex flex-col items-center text-xs">
-				<span class="p-2 text-neutral-500">Selected Camera</span>
+				<span class="p-2 text-neutral-500">Camera</span>
 
 				<select
 					bind:value={selectedCameraId}

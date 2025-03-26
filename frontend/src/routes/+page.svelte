@@ -44,7 +44,7 @@
 				<h2 class="text-base/5 font-semibold text-orange-500">Camera Control</h2>
 			</div>
 		</div>
-		<div class="flex flex-col flex-1 overflow-y-auto">
+		<div class="flex flex-col flex-1">
 			<nav class="flex-1 py-4 bg-neutral-900 flex flex-col">
 				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addCameraPreset}>
 					<svg
