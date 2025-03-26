@@ -13,9 +13,12 @@
 	let showSettings = false;
 	let isDragging = false;
 	let animationClass = '';
-	let selectedCameraId: number | null = null;
-	// TODO: Implement camera selection from dropdown
-	// let selectedCamera = cameras.find((camera) => camera.id === cameraPreset.camera_id);
+	let selectedCameraId: number | null = cameraPreset.camera_id || null;
+	
+	$: if (selectedCameraId !== null) {
+		cameraPreset.camera_id = selectedCameraId;
+	}
+
 	function animateAPIcallResponse(sucess: boolean) {
 		animationClass = getAnimationClass(sucess);
 		setTimeout(() => {
