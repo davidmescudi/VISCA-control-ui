@@ -42,7 +42,6 @@
 
 	async function handleBlur(event: FocusEvent) {
 		const blurSucess = await updateCameraPreset(cameraPreset);
-		console.log(selectedCamera, selectedCameraColor);
 		animateAPIcallResponse(blurSucess);
 	}
 

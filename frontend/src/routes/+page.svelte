@@ -45,8 +45,8 @@
 			</div>
 		</div>
 		<div class="flex flex-col flex-1">
-			<nav class="flex-1 py-4 bg-neutral-900 flex flex-col">
-				<button class="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addCameraPreset}>
+			<nav class="flex-1 pb-4 bg-neutral-900 flex flex-col">
+				<button class="flex items-center px-4 py-4 text-gray-100 hover:bg-orange-500 w-full" on:click|preventDefault={addCameraPreset}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
