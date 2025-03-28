@@ -7,3 +7,31 @@
     background-size: 30px 30px;
     background-position: -5px -5px
 }
+
+.color-picker {
+    --picker-height: 200px;
+    --picker-width: 200px;
+    --slider-width: 30px;
+    --picker-indicator-size: 10px;
+    --picker-z-index: 10000000;
+    --input-size: 25px;
+    --focus-color: theme('colors.orange.500');
+    --cp-bg-color: theme('colors.neutral.900');
+    --cp-border-color: theme('colors.neutral.700');
+    --cp-text-color: white;
+    --cp-input-color: theme('colors.neutral.800');
+    --cp-button-hover-color: theme('colors.neutral.700');
+}
+
+.color-picker input {
+    @apply focus:border-transparent focus:outline-none focus:ring-0;
+}
+
+.color-picker label {
+    translate: 0 -6px;
+}
+
+.color-picker .color, .color-picker .alpha {
+    border-radius: 30% !important;
+    clip-path: none !important;
+}

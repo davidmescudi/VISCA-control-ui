@@ -35,18 +35,12 @@
 </script>
 
 <style>
-	.dark {
-		--cp-bg-color: #333;
-		--cp-border-color: white;
-		--cp-text-color: white;
-		--cp-input-color: #555;
-		--cp-button-hover-color: #777;
-	}
+
 </style>
 
-<div class="text-white text-sm">
+<div class="text-white text-sm border-t border-neutral-700">
     {#each $cameras as camera}
-        <div class="flex justify-between p-3 border-b border-neutral-700">
+        <div class="flex justify-between py-3 pl-3 border-b border-neutral-700">
             <div class="flex flex-col">
                 <span class="font-bold pb-1">{camera.name}</span>
                 <div class="flex flex-col text-xs text-neutral-500">
@@ -64,12 +58,13 @@
                     </div>
                 </div>
             </div>
-            <div class="relative overflow-visible dark">
+            <div class="relative overflow-visible color-picker">
                 <ColorPicker
                     bind:hex={camera.color}
+                    isAlpha={false}
+                    label=""
                     position="responsive"
                     onInput={(event) => event.hex && saveColor(camera, event.hex)}
-                    --picker-z-index="10000000"
                 />
             </div>
         </div>
