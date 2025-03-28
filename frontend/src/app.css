@@ -28,7 +28,7 @@
 }
 
 .color-picker label {
-    translate: 0 -6px;
+    translate: -5px -5px;
 }
 
 .color-picker .color, .color-picker .alpha {
