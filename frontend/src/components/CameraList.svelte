@@ -69,6 +69,7 @@
                     bind:hex={camera.color}
                     position="responsive"
                     onInput={(event) => event.hex && saveColor(camera, event.hex)}
+                    --picker-z-index="10000000"
                 />
             </div>
         </div>
