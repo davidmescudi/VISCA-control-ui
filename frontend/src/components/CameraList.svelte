@@ -1,32 +1,30 @@
 <script lang="ts">
     import type { Camera } from '../types/camera';
     import { writable } from 'svelte/store';
-    import { colord } from 'colord';
     import ColorPicker from 'svelte-awesome-color-picker';
-    import { onMount } from 'svelte';
 
     export let cameras = writable<Camera[]>([]);
     
     async function saveColor(camera: Camera, hex: string): Promise<boolean> {
-        camera.color = hex;
-        console.log(camera.color);
-        // TODO: Implement update on backend
+        let prev_color = camera.color;
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/camera/update/color/${camera.id}`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
                     'Pragma': 'no-cache',
                     'Expires': '0'
                 },
-                body: JSON.stringify(camera.color)
+                body: JSON.stringify({color: hex})
             });
             
             if (response.ok) {
+                camera.color = hex;
                 return true;
             } else {
-                console.error(await response.text());
+                camera.color = prev_color;
+                console.error('Failed to update camera color:', response.statusText);
                 return false;
             }
         } catch (error) {
@@ -68,7 +66,7 @@
             </div>
             <div class="relative overflow-visible dark">
                 <ColorPicker
-                    color={colord(camera.color || '#FF5722')}
+                    bind:hex={camera.color}
                     position="responsive"
                     onInput={(event) => event.hex && saveColor(camera, event.hex)}
                 />
