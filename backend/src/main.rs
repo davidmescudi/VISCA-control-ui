@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate rocket;
 use rocket::serde::json::Json;
-use rocket::response::status::{BadRequest, Accepted, NoContent};
+use rocket::response::status::{BadRequest, Accepted, NoContent, NotFound};
 use rocket::State;
 use std::sync::{Arc, RwLock};
 use std::collections::{HashMap, HashSet};
@@ -11,10 +11,17 @@ use serde::Deserialize;
 mod structs {
     pub mod camera_preset;
     pub mod camera;
+    pub mod config;
 }
 
 use structs::camera_preset::CameraPreset;
 use structs::camera::Camera;
+use structs::config::Config;
+
+#[derive(Deserialize)]
+struct ColorUpdatePayload {
+    color: String,
+}
 
 mod fairings {
     pub mod cors;
@@ -26,14 +33,10 @@ fn all_options() {
     /* Intentionally left empty */
 }
 
-#[derive(Deserialize)]
-struct Config {
-    cameras: Vec<Camera>,
-}
-
 fn load_config() -> Config {
     let config_data = fs::read_to_string("config.json").expect("Unable to read config file");
-    serde_json::from_str(&config_data).expect("Unable to parse config file")
+    let config: Config = serde_json::from_str(&config_data).expect("Unable to parse config file");
+    config
 }
 
 #[get("/download")]
@@ -110,8 +113,27 @@ fn update_camera_preset(id: u32, camera_preset: Json<CameraPreset>, state: &Stat
     }
 }
 
+#[put("/camera/update/color/<id>", format = "json", data = "<payload>")]
+fn update_camera_color(id: u32, payload: Json<ColorUpdatePayload>, config_state: &State<Arc<RwLock<Config>>>) -> Result<Accepted<Json<Camera>>, NotFound<String>> {
+    let mut config = config_state.write().unwrap();
+    let camera_option = config.cameras.iter_mut().find(|c| c.id == id);
+
+    match camera_option {
+        Some(camera) => {
+            camera.color = Some(payload.color.clone());
+            let updated_camera = camera.clone();
+            // TODO: Remove when not needed
+            info!("Current config state: {:?}", *config);
+            Ok(Accepted(Json(updated_camera)))
+        }
+        None => Err(NotFound(format!("Camera with ID {} not found", id))),
+    }
+}
+
+
 #[get("/cameras")]
-fn get_cameras(config: &State<Config>) -> Json<Vec<Camera>> {
+fn get_cameras(config_state: &State<Arc<RwLock<Config>>>) -> Json<Vec<Camera>> {
+    let config = config_state.read().unwrap();
     Json(config.cameras.clone())
 }
 
@@ -120,10 +142,10 @@ fn rocket() -> _ {
     let config = load_config();
     rocket::build()
         .attach(Cors)
-        .manage(config)
+        .manage(Arc::new(RwLock::new(config)))
         .manage(Arc::new(RwLock::new(HashMap::<u32, CameraPreset>::new())))
         .mount("/", routes![all_options])
         // TODO: Replace with new functions
-        .mount("/api", routes![insert_camera_preset, update_camera_preset, delete_camera_preset, get_all_camera_presets, get_camera_preset, get_cameras])
+        .mount("/api", routes![insert_camera_preset, update_camera_preset, delete_camera_preset, get_all_camera_presets, get_camera_preset, get_cameras, update_camera_color])
         .mount("/backup", routes![download_state, upload_state])
 }

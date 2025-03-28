@@ -14,6 +14,8 @@
 	let isDragging = false;
 	let animationClass = '';
 	let selectedCameraId: number | null = cameraPreset.camera_id || null;
+	$: selectedCamera = cameras.find((camera) => camera.id === selectedCameraId);
+	$: selectedCameraColor = selectedCamera ? selectedCamera.color : undefined;
 	
 	$: if (selectedCameraId !== null) {
 		cameraPreset.camera_id = selectedCameraId;
@@ -79,9 +81,9 @@
 </script>
 
 <div
-	class="rounded-lg border border-neutral-700 bg-neutral-900 p-4 draggable draggable-{cameraPreset.id} w-max absolute {animationClass}"
+	class="rounded-lg border border-neutral-700 bg-neutral-900 p-4 draggable draggable-{cameraPreset.id} w-max absolute {animationClass} {selectedCameraColor ? "ring-1" : ""}"
 	style="transform: translate({cameraPreset.workspace_position.x}px, {cameraPreset
-		.workspace_position.y}px); z-index: {showSettings ? 1000 : 10};"
+		.workspace_position.y}px); z-index: {showSettings ? 1000 : 10}; {selectedCameraColor ? `--tw-ring-color: ${selectedCameraColor};` : ''}"
 >
 	<div class="flex items-center gap-4">
 		<!-- Play button to execute camera preset -->
@@ -285,7 +287,7 @@
 			</div>
 			<!-- Input to update Camera used by preset -->
 			<label for="cameraSelect" class="w-full flex flex-col items-center text-xs">
-				<span class="p-2 text-neutral-500">Selected Camera</span>
+				<span class="p-2 text-neutral-500">Camera</span>
 
 				<select
 					bind:value={selectedCameraId}
